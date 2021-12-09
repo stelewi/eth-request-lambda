@@ -7,14 +7,6 @@ let response = {
     body: ""
 }
 
-let requestOptions = {
-    timeout: 10000,
-    host: "nd-a6cusdf2brgzpdfxteickip7uq.ethereum.managedblockchain.eu-west-2.amazonaws.com",
-    method: "POST",
-    region: 'eu-west-2',
-    body: '',
-}
-
 let request = async (httpOptions) => {
     return new Promise((resolve, reject) => {
 
@@ -35,20 +27,35 @@ let request = async (httpOptions) => {
     })
 }
 
+
 exports.handler = async (event, context) => {
     try {
 
-        requestOptions.body = JSON.stringify(event);
+        let requestOptions = {
+            host: "nd-a6cusdf2brgzpdfxteickip7uq.ethereum.managedblockchain.eu-west-2.amazonaws.com",
+            method: "POST",
+            path: "/",
+            region: 'eu-west-2',
+            headers: {
+                "Content-Type" : "application/json"
+            }
+        }
+
+        requestOptions.body = event.body;
+        requestOptions.headers.date = new Date();
 
         aws4.sign(requestOptions, {
-            secretAccessKey: 'XXXXXXXXXXXXXXXXXXXXXXXXXX',
-            accessKeyId: 'AKIATIZWXR4RQUHVAPD7',
+            secretAccessKey: 'XXXXXXXXXXXXXXXXXXXXXXX',
+            accessKeyId: 'AKIATIZWXR4RR3O4M3MR',
         });
 
         console.log(requestOptions)
 
         let result = await request(requestOptions)
         response.body = JSON.stringify(result)
+
+        console.log(result.message);
+
         return response
     } catch (e) {
         response.body = `Internal server error: ${e.code ? e.code : "Unspecified"}`
