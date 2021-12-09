@@ -12,14 +12,8 @@ let requestOptions = {
     host: "nd-a6cusdf2brgzpdfxteickip7uq.ethereum.managedblockchain.eu-west-2.amazonaws.com",
     method: "POST",
     region: 'eu-west-2',
-    body: '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":83}',
+    body: '',
 }
-
-
-aws4.sign(requestOptions, {
-    secretAccessKey: 'XXXXXXXXXXXXXXXXXXXXXXXXXX',
-    accessKeyId: 'XXXXXXXXXXXXXXXXXXXXXXXXXXX',
-});
 
 let request = async (httpOptions) => {
     return new Promise((resolve, reject) => {
@@ -28,7 +22,7 @@ let request = async (httpOptions) => {
 
             let body = ''
             res.on('data', (chunk) => { body += chunk })
-            res.on('end', () => { console.log(body); resolve(body); })
+            res.on('end', () => { resolve(body); })
 
         });
 
@@ -36,13 +30,23 @@ let request = async (httpOptions) => {
             reject(e)
         })
 
-        req.write('{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":83}');
+        req.write(httpOptions.body);
         req.end();
     })
 }
 
 exports.handler = async (event, context) => {
     try {
+
+        requestOptions.body = JSON.stringify(event);
+
+        aws4.sign(requestOptions, {
+            secretAccessKey: 'XXXXXXXXXXXXXXXXXXXXXXXXXX',
+            accessKeyId: 'AKIATIZWXR4RQUHVAPD7',
+        });
+
+        console.log(requestOptions)
+
         let result = await request(requestOptions)
         response.body = JSON.stringify(result)
         return response
