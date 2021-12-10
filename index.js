@@ -45,14 +45,14 @@ exports.handler = async (event, context) => {
         requestOptions.headers.date = new Date();
 
         aws4.sign(requestOptions, {
-            secretAccessKey: 'XXXXXXXXXXXXXXXXXXXXXXX',
+            secretAccessKey: 'XXXXXXXXXXXXXXXXXX',
             accessKeyId: 'AKIATIZWXR4RR3O4M3MR',
         });
 
         console.log(requestOptions)
 
         let result = await request(requestOptions)
-        response.body = JSON.stringify(result)
+        response.body = result
 
         console.log(result.message);
 
